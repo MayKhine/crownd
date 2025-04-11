@@ -1,4 +1,3 @@
-import { useState } from "react"
 import { Grid } from "./Grid"
 
 const createGameGridArr = (numOfCol: number) => {
@@ -6,10 +5,6 @@ const createGameGridArr = (numOfCol: number) => {
     new Array(numOfCol).fill(".")
   )
   return grid
-}
-
-const getRandomNumber = (maxNum: number) => {
-  return Math.floor(Math.random() * maxNum)
 }
 
 const getRandomSide = () => {
@@ -38,25 +33,36 @@ const generateXonGridArr = (gridArr: Array<Array<string>>) => {
   for (let i = 0; i < gridArr.length; i++) {
     const col = getRandomNumberUnique(gridArr.length, pickedCols)
     gridArr[i][col] = "x"
-    xArr.push({ x: col, color: colorArr[i], xy: { x: i, y: col } })
+    xArr.push({ x: col, color: colorArr[i], xy: { x: col, y: i } })
   }
 
   return xArr
 }
 
+const checkSpaceLeft = (gridArr: Array<Array<string>>) => {
+  for (let i = 0; i < gridArr.length; i++) {
+    for (let x = 0; x < gridArr.length; x++) {
+      if (gridArr[i][x] == ".") {
+        return true
+      }
+    }
+  }
+  return false
+}
 const colorArr = ["red", "blue", "pink", "white", "green"]
+
 export const Board = () => {
   const gameSize = 5
   const initialGridArr = createGameGridArr(gameSize)
   const xArr = generateXonGridArr(initialGridArr)
   const gameGridArr = initialGridArr
   // const [gameGridArr, setGameGridArr] = useState(initialGridArr)
-
   const checkIsValidToGrow = (
     xLocation: { x: number; y: number },
-    gridArr: Array<Array<string>>,
-    randomside: { placement: string; value: number }
+    gridArr: Array<Array<string>>
+    // randomside: { placement: string; value: number }
   ) => {
+    const randomside = getRandomSide()
     //x
     if (randomside.placement == "row") {
       const updatedX = xLocation.x + randomside.value
@@ -75,7 +81,7 @@ export const Board = () => {
       if (
         updatedY >= 0 &&
         updatedY < gridArr.length &&
-        gridArr[xLocation.y][updatedY] == "."
+        gridArr[updatedY][xLocation.x] == "."
       ) {
         return { x: xLocation.x, y: updatedY }
       }
@@ -86,19 +92,18 @@ export const Board = () => {
 
   const createBlockPuzzle = () => {
     for (let i = 0; i < gameSize; i++) {
-      const randomSide = getRandomSide()
-      const xIndex = xArr[i].x
       const xColor = xArr[i].color
       const xPlacement = xArr[i].xy
 
-      const updatedPlacement = checkIsValidToGrow(
-        xPlacement,
-        gameGridArr,
-        randomSide
-      )
-      if (updatedPlacement !== false) {
-        gameGridArr[updatedPlacement.y][updatedPlacement.x] = xColor
-      }
+      let iRowGrowedFlag = false
+      do {
+        const updatedPlacement = checkIsValidToGrow(xPlacement, gameGridArr)
+        console.log(updatedPlacement, xPlacement)
+        if (updatedPlacement != false) {
+          gameGridArr[updatedPlacement.y][updatedPlacement.x] = xColor
+          iRowGrowedFlag = true
+        }
+      } while (!iRowGrowedFlag)
     }
   }
 
