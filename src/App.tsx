@@ -1,3 +1,13 @@
+import { Board } from "./components/Board"
+import { Header } from "./components/Header"
+
 export const App = () => {
-  return <div> Crown'd </div>
+  return (
+    <div>
+      <Header />
+      <div>
+        <Board />
+      </div>
+    </div>
+  )
 }
