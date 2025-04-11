@@ -8,9 +8,10 @@ export const Grid = ({ rows }: GridProps) => {
   console.log("Grid: ", rows)
   return (
     <div>
-      {rows.map((row) => {
+      {rows.map((row, index) => {
         return (
           <div
+            key={index}
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(5, 1fr)",
@@ -21,8 +22,8 @@ export const Grid = ({ rows }: GridProps) => {
               boxSizing: "border-box",
             }}
           >
-            {row.map((cell) => {
-              return <GridCell value={cell} />
+            {row.map((cell, index) => {
+              return <GridCell key={index} value={cell} />
             })}
           </div>
         )
