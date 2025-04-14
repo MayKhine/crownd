@@ -17,23 +17,55 @@ const getRandomSide = () => {
   return randomSidesArr[Math.floor(Math.random() * 4)]
 }
 
-const getRandomNumberUnique = (maxNum: number, picked: Set<number>) => {
+const isDiagonallyTouching = (prevCol: number, curCol: number) => {
+  console.log(
+    "Is diagonally touching: ",
+    prevCol,
+    curCol,
+    Math.abs(prevCol - curCol) == 1 ? true : false
+  )
+  return Math.abs(prevCol - curCol) == 1 ? true : false
+}
+
+const getRandomNumberUnique = (
+  maxNum: number,
+  picked: Set<number>,
+  prevCol: number
+) => {
+  let attempts = 0
+  const MAX_ATTEMPTS = 100
   let randomNum
   do {
     randomNum = Math.floor(Math.random() * maxNum)
-  } while (picked.has(randomNum)) // If picked, retry
-
+    attempts++
+    if (attempts > MAX_ATTEMPTS) {
+      console.log("resett ")
+      return "reset"
+    }
+  } while (picked.has(randomNum) || isDiagonallyTouching(prevCol, randomNum)) // If picked, retry
+  // prevCol = randomNum
   picked.add(randomNum) // Mark as picked
   return randomNum
 }
 
 const generateXonGridArr = (gridArr: Array<Array<string>>) => {
-  const pickedCols = new Set<number>() // Keep track of picked columns
-  const xArr = []
+  let pickedCols = new Set<number>() // Keep track of picked columns
+  let xArr = []
+  let prevCol: number = -999
+
   for (let i = 0; i < gridArr.length; i++) {
-    const col = getRandomNumberUnique(gridArr.length, pickedCols)
-    gridArr[i][col] = "x"
-    xArr.push({ x: col, color: colorArr[i], xy: { x: col, y: i } })
+    const col = getRandomNumberUnique(gridArr.length, pickedCols, prevCol)
+    if (col === "reset") {
+      pickedCols = new Set<number>()
+      xArr = []
+      i = -1
+      gridArr.forEach((row) => row.fill("."))
+    } else {
+      console.log("picked Cols ", pickedCols)
+      gridArr[i][col] = "x"
+      prevCol = col
+      xArr.push({ x: col, color: colorArr[i], xy: { x: col, y: i } })
+    }
   }
 
   return xArr
