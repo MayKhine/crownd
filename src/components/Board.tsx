@@ -4,7 +4,8 @@ export type GridCellType = {
   row: number
   col: number
   value: string
-  // color?: string
+  crown?: boolean
+  color?: string
 }
 const createGameGridArr = (gameSize: number) => {
   // const grid = Array.from({ length: numOfCol }, (rowIndex) =>
@@ -48,33 +49,33 @@ const getRandomNumberUnique = (
   return randomNum
 }
 
-const generateCrownsonGridArr = (gridArr: Array<Array<GridCellType>>) => {
-  let pickedCols = new Set<number>() // Keep track of picked columns
-  let crownsArr = []
-  let prevCol: number = -999
+// const generateCrownsonGridArr = (gridArr: Array<Array<GridCellType>>) => {
+//   let pickedCols = new Set<number>() // Keep track of picked columns
+//   let crownsArr = []
+//   let prevCol: number = -999
 
-  for (let i = 0; i < gridArr.length; i++) {
-    const col = getRandomNumberUnique(gridArr.length, pickedCols, prevCol)
-    if (col === "reset") {
-      pickedCols = new Set<number>()
-      crownsArr = []
-      i = -1
-      // gridArr.forEach((row) => row.fill("."))
-      gridArr.forEach((row) => {
-        row.forEach((cell) => {
-          cell.value = "."
-        })
-      })
-    } else {
-      gridArr[i][col].value = "x"
-      prevCol = col
-      // xArr.push({ x: col, color: colorArr[i], xy: { x: col, y: i } })
-      crownsArr.push({ row: i, col: col, value: "x" })
-    }
-  }
+//   for (let i = 0; i < gridArr.length; i++) {
+//     const col = getRandomNumberUnique(gridArr.length, pickedCols, prevCol)
+//     if (col === "reset") {
+//       pickedCols = new Set<number>()
+//       crownsArr = []
+//       i = -1
+//       // gridArr.forEach((row) => row.fill("."))
+//       gridArr.forEach((row) => {
+//         row.forEach((cell) => {
+//           cell.value = "."
+//         })
+//       })
+//     } else {
+//       gridArr[i][col].value = "x"
+//       prevCol = col
+//       // xArr.push({ x: col, color: colorArr[i], xy: { x: col, y: i } })
+//       crownsArr.push({ row: i, col: col, value: "x" })
+//     }
+//   }
 
-  return crownsArr
-}
+//   return crownsArr
+// }
 
 // const checkIsValidToGrow = (
 //   xLocation: { x: number; y: number },
@@ -120,78 +121,173 @@ const generateCrownsonGridArr = (gridArr: Array<Array<GridCellType>>) => {
 //   return false
 // }
 
+const generatePuzzleGridArr = (gridArr: Array<Array<GridCellType>>) => {
+  let pickedCols = new Set<number>() // Keep track of picked columns
+  let puzzleBlockArr = []
+  let prevCol: number = -999
+
+  for (let i = 0; i < gridArr.length; i++) {
+    const col = getRandomNumberUnique(gridArr.length, pickedCols, prevCol)
+    if (col === "reset") {
+      pickedCols = new Set<number>()
+      puzzleBlockArr = []
+      i = -1
+      // gridArr.forEach((row) => row.fill("."))
+      gridArr.forEach((row) => {
+        row.forEach((cell) => {
+          cell.value = "."
+        })
+      })
+    } else {
+      gridArr[i][col].value = "x"
+      prevCol = col
+      const puzzleBlock = {
+        row: i,
+        col: col,
+        value: "x",
+        crown: true,
+        color: colorArr[i],
+      }
+      puzzleBlockArr.push([puzzleBlock])
+    }
+  }
+
+  return puzzleBlockArr
+}
+
 const getRandomSide = () => {
   const randomSidesArr = [
-    { placement: "row", value: -1 },
-    { placement: "row", value: 1 },
-    { placement: "col", value: -1 },
-    { placement: "col", value: 1 },
+    { position: "row", value: -1 },
+    { position: "row", value: 1 },
+    { position: "col", value: -1 },
+    { position: "col", value: 1 },
   ]
   return randomSidesArr[Math.floor(Math.random() * 4)]
 }
 
-const isValidToGrow = (
-  crown: GridCellType,
+const getCellPositionToAttachToCurCell = (
+  curCell: GridCellType,
   initialGridArr: Array<Array<GridCellType>>
 ) => {
-  const randomside = getRandomSide()
-  //x
-  if (randomside.placement == "row") {
-    const updatedRow = crown.row + randomside.value
+  console.log("attache cell to this cell ", curCell, getRandomSide())
+  const randomPosition = getRandomSide()
+
+  //check if it is valid to gorw
+  if (randomPosition.position == "row") {
+    const updatedRow = curCell.row + randomPosition.value
     if (
       updatedRow >= 0 &&
       updatedRow < initialGridArr.length &&
-      initialGridArr[updatedRow][crown.col].value == "."
+      initialGridArr[updatedRow][curCell.col].value == "."
     ) {
-      return { col: crown.col, row: updatedRow }
+      return { col: curCell.col, row: updatedRow }
     }
   }
 
-  //y
-  if (randomside.placement == "col") {
-    const updatedCol = crown.col + randomside.value
+  if (randomPosition.position == "col") {
+    const updatedCol = curCell.col + randomPosition.value
     if (
       updatedCol >= 0 &&
       updatedCol < initialGridArr.length &&
-      initialGridArr[crown.row][updatedCol].value == "."
+      initialGridArr[curCell.row][updatedCol].value == "."
     ) {
-      return { col: updatedCol, row: crown.row }
+      return { col: updatedCol, row: curCell.row }
     }
   }
-  return false
+
+  return { col: null, row: null }
 }
 
-// const createBlockPuzzle = () => {
-//   for (let i = 0; i < gameSize; i++) {
-//     const xColor = xArr[i].color
-//     const xPlacement = xArr[i].xy
-
-//     let iRowGrowedFlag = false
-//     do {
-//       const updatedPlacement = checkIsValidToGrow(xPlacement, gameGridArr)
-//       console.log(updatedPlacement, xPlacement)
-//       if (updatedPlacement != false) {
-//         gameGridArr[updatedPlacement.y][updatedPlacement.x] = xColor
-//         iRowGrowedFlag = true
-//       }
-//     } while (!iRowGrowedFlag)
-//   }
-// }
-
 const createPuzzleBlocks = (
-  crownPostionsArr: Array<GridCellType>,
+  puzzleGridArr: Array<Array<GridCellType>>,
   initialGridArr: Array<Array<GridCellType>>
 ) => {
-  for (let i = 0; i < crownPostionsArr.length; i++) {
-    //check if it is able to grow for each crown
-    const growPosition = isValidToGrow(crownPostionsArr[i], initialGridArr)
-    if (growPosition !== false) {
-      initialGridArr[growPosition.row][growPosition.col].value = colorArr[i]
+  console.log(
+    "TODO : work on create puzzle blocks ",
+    puzzleGridArr,
+    initialGridArr
+  )
+
+  let puzzleSize = puzzleGridArr.length
+  const gridSize = gameSize * gameSize
+
+  for (let i = 0; i < puzzleGridArr.length; i++) {
+    let newCellFlag = false
+    let newCellPosition
+
+    do {
+      newCellPosition = getCellPositionToAttachToCurCell(
+        puzzleGridArr[i][0],
+        initialGridArr
+      )
+      if (newCellPosition.col !== null && newCellPosition.row !== null) {
+        newCellFlag = true
+      }
+    } while (newCellFlag == false)
+
+    if (newCellPosition.col !== null && newCellPosition.row !== null) {
+      const newCell = {
+        col: newCellPosition.col,
+        row: newCellPosition.row,
+        value: ".",
+        color: puzzleGridArr[i][0].color,
+      }
+      puzzleGridArr[i].push(newCell)
+      initialGridArr[newCellPosition.row][newCellPosition.col].value = "puzzle"
+      puzzleSize += 1
     }
   }
+
+  // while (puzzleSize < gridSize + 1) {
+  //   for (let i = 0; i < puzzleGridArr.length; i++) {
+  //     if (puzzleSize < gridSize + 1) {
+  //       // get a random cell from
+  //       const randomCell =
+  //         puzzleGridArr[i][Math.floor(Math.random() * puzzleGridArr[i].length)]
+
+  //       const newCellPosition = getCellPositionToAttachToCurCell(
+  //         randomCell,
+  //         initialGridArr
+  //       )
+
+  //       if (newCellPosition.col !== null && newCellPosition.row !== null) {
+  //         const newCell = {
+  //           col: newCellPosition.col,
+  //           row: newCellPosition.row,
+  //           value: ".",
+  //           color: puzzleGridArr[i][0].color,
+  //         }
+  //         puzzleGridArr[i].push(newCell)
+  //         initialGridArr[newCellPosition.row][newCellPosition.col].value =
+  //           "puzzle"
+  //         puzzleSize += 1
+  //         console.log("Puzzle Size: ", puzzleSize)
+  //       }
+  //     }
+  //   }
+  // }
+
+  console.log("puzzle now: ", puzzleGridArr)
+}
+
+const isEmptySpaceToGrow = (
+  puzzleGridArr: Array<Array<GridCellType>>,
+  gameSize: number
+) => {
+  let curGridSize = 0
+  for (let i = 0; i < puzzleGridArr.length; i++) {
+    curGridSize += puzzleGridArr[i].length
+  }
+
+  console.log("grid Size: ", curGridSize)
+  if (curGridSize == gameSize * gameSize) {
+    return false
+  }
+  return true
 }
 
 const colorArr = ["red", "blue", "pink", "white", "green"]
+const gameSize = 5
 
 export const Board = () => {
   // x: Column
@@ -199,8 +295,11 @@ export const Board = () => {
 
   const gameSize = 5
   const initialGridArr = createGameGridArr(gameSize) //fill with .
-  const crownPostionsArr = generateCrownsonGridArr(initialGridArr)
-  const blockPuzzleArr = createPuzzleBlocks(crownPostionsArr, initialGridArr)
+  // const crownPostionsArr = generateCrownsonGridArr(initialGridArr)
+  const puzzleGridArr = generatePuzzleGridArr(initialGridArr)
+  const puzzleBlocksArr = createPuzzleBlocks(puzzleGridArr, initialGridArr)
+
+  // const blockPuzzleArr = createPuzzleBlocks(crownPostionsArr, initialGridArr)
 
   return (
     <div>
