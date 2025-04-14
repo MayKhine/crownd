@@ -1,14 +1,15 @@
+import { GridCellType } from "./Board"
 import { GridCell } from "./GridCell"
 
 type GridProps = {
-  rows: Array<Array<string>>
+  grid: Array<Array<GridCellType>>
 }
 
-export const Grid = ({ rows }: GridProps) => {
-  console.log("Grid: ", rows)
+export const Grid = ({ grid }: GridProps) => {
+  console.log("grid: ", grid)
   return (
     <div>
-      {rows.map((row, index) => {
+      {grid.map((row, index) => {
         return (
           <div
             key={index}
@@ -23,7 +24,7 @@ export const Grid = ({ rows }: GridProps) => {
             }}
           >
             {row.map((cell, index) => {
-              return <GridCell key={index} value={cell} />
+              return <GridCell key={index} cellData={cell} />
             })}
           </div>
         )
