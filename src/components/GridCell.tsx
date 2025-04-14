@@ -3,7 +3,7 @@ import { GridCellType } from "./Board"
 type GridCellProps = {
   width?: string
   cellData: GridCellType
-  cellClick: (cell: GridCellType) => void
+  cellClick: (cell: GridCellType, clickType: string) => void
 }
 
 export const GridCell = ({ width, cellData, cellClick }: GridCellProps) => {
@@ -20,11 +20,16 @@ export const GridCell = ({ width, cellData, cellClick }: GridCellProps) => {
     <div
       style={{ ...style }}
       onClick={() => {
-        cellClick(cellData)
+        cellClick(cellData, "left")
+      }}
+      onContextMenu={(e: React.MouseEvent) => {
+        e.preventDefault()
+        cellClick(cellData, "right")
       }}
     >
-      R: {cellData.row}
-      C: {cellData.col}
+      {/* R: {cellData.row}
+      C: {cellData.col} */}
+      {cellData.user}
     </div>
   )
 }

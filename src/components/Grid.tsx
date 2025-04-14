@@ -3,7 +3,7 @@ import { GridCell } from "./GridCell"
 
 type GridProps = {
   grid: Array<Array<GridCellType>>
-  cellClick: (cell: GridCellType) => void
+  cellClick: (cell: GridCellType, clickType: string) => void
 }
 
 export const Grid = ({ grid, cellClick }: GridProps) => {

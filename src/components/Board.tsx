@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Grid } from "./Grid"
 
 export type GridCellType = {
@@ -6,17 +7,14 @@ export type GridCellType = {
   value: string
   crown?: boolean
   color?: string
+  user?: string
 }
-const createGameGridArr = (gameSize: number) => {
-  // const grid = Array.from({ length: numOfCol }, (rowIndex) =>
-  //   new Array(numOfCol).fill(".")
-  // )
-
+const createGameGridArr = (gameSize: number, value: string) => {
   const grid = []
   for (let row = 0; row < gameSize; row++) {
     let rowArr = []
     for (let col = 0; col < gameSize; col++) {
-      rowArr.push({ row: row, col: col, value: "." })
+      rowArr.push({ row: row, col: col, value: value, user: "" })
     }
     grid.push(rowArr)
     rowArr = []
@@ -277,20 +275,86 @@ export const Board = () => {
   // y: Row
 
   const gameSize = 5
-  const initialGridArr = createGameGridArr(gameSize) //fill with .
+  const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr)
-  console.log("Before Puzzle Grid arr: ", puzzleGridArr)
-
   createPuzzleBlocks(puzzleGridArr, initialGridArr)
-  console.log("Puzzle Grid arr: ", puzzleGridArr)
+  //puzzle grid arr is not in use
 
-  const cellClick = (cell: GridCellType) => {
-    console.log("cell click ", cell)
+  const cellClick = (cell: GridCellType, clickType: string) => {
+    console.log("cell click ", cell, playerGridArr, clickType)
+
+    // left click : Place  a crown
+    // right click : place a mark
+
+    if (clickType == "left") {
+      setGameGridArr((prevData) =>
+        prevData.map((row, i) =>
+          row.map((cellItem, x) => {
+            if (i === cell.row && x === cell.col) {
+              return { ...cellItem, user: "Crown" }
+            }
+            return cellItem
+          })
+        )
+      )
+
+      setPlayerGridArr((prevData) => {
+        const exists = prevData.some(
+          (item) => item.row === cell.row && item.col === cell.col
+        )
+
+        if (exists) {
+          return prevData.map((item) =>
+            item.row === cell.row && item.col === cell.col
+              ? { ...item, value: "Crown" }
+              : item
+          )
+        } else {
+          return [...prevData, { row: cell.row, col: cell.col, value: "Crown" }]
+        }
+      })
+    }
+
+    if (clickType == "right") {
+      setGameGridArr((prevData) =>
+        prevData.map((row, i) =>
+          row.map((cellItem, x) => {
+            if (i === cell.row && x === cell.col) {
+              return { ...cellItem, user: "X Mark" }
+            }
+            return cellItem
+          })
+        )
+      )
+      setPlayerGridArr((prevData) => {
+        const exists = prevData.some(
+          (item) => item.row === cell.row && item.col === cell.col
+        )
+
+        if (exists) {
+          return prevData.map((item) =>
+            item.row === cell.row && item.col === cell.col
+              ? { ...item, value: "X" }
+              : item
+          )
+        } else {
+          return [...prevData, { row: cell.row, col: cell.col, value: "X" }]
+        }
+      })
+    }
+
+    console.log("player grid arr", playerGridArr)
   }
+
+  const [gameGridArr, setGameGridArr] = useState(initialGridArr)
+  const [playerGridArr, setPlayerGridArr] = useState<
+    Array<{ row: number; col: number; value: string }>
+  >([])
+
   return (
     <div>
       BOARDDD
-      <Grid grid={initialGridArr} cellClick={cellClick} />
+      <Grid grid={gameGridArr} cellClick={cellClick} />
     </div>
   )
 }
