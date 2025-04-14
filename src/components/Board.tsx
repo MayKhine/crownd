@@ -267,6 +267,54 @@ const createPuzzleBlocks = (
   }
 }
 
+const playerCrownsCount = (playerArr: Array<GridCellType>) => {
+  let total = 0
+  playerArr.forEach((cell) => (cell.value == "Crown" ? (total += 1) : total))
+  return total
+}
+
+const checkPlayerWin = (
+  playerCrownsArr: Array<GridCellType>,
+  puzzleGridArr: Array<Array<GridCellType>>
+) => {
+  console.log("checkPlayerWin: ", playerCrownsArr)
+  //check if there's more than one crown on each row , each col and diagonal
+  const rowCheck = checkOnePerRow(playerCrownsArr)
+  const colCheck = checkOnePerCol(playerCrownsArr)
+  const puzzleBlockCheck = checkOnePerPuzzleBlock(
+    playerCrownsArr,
+    puzzleGridArr
+  )
+  console.log("row chek: ", rowCheck, colCheck, puzzleBlockCheck)
+}
+
+const checkOnePerRow = (playerCrownsArr: Array<GridCellType>) => {
+  const rows = new Set()
+  for (let i = 0; i < playerCrownsArr.length; i++) {
+    const cell = playerCrownsArr[i]
+    if (rows.has(cell.row)) return false
+    rows.add(cell.row)
+  }
+  return true
+}
+
+const checkOnePerCol = (playerCrownsArr: Array<GridCellType>) => {
+  const cols = new Set()
+  for (let i = 0; i < playerCrownsArr.length; i++) {
+    const cell = playerCrownsArr[i]
+    if (cols.has(cell.col)) return false
+    cols.add(cell.col)
+  }
+  return true
+}
+
+const checkOnePerPuzzleBlock = (
+  playerCrownsArr: Array<GridCellType>,
+  puzzleBlockArr: Array<Array<GridCellType>>
+) => {
+  console.log("Check one per puzzle block ", playerCrownsArr, puzzleBlockArr)
+}
+
 const colorArr = ["red", "blue", "pink", "white", "green"]
 const gameSize = 5
 
@@ -313,6 +361,15 @@ export const Board = () => {
           return [...prevData, { row: cell.row, col: cell.col, value: "Crown" }]
         }
       })
+
+      if (playerCrownsCount(playerGridArr) + 1 == gameSize) {
+        console.log("TO DO CHECK WIN STATE")
+        const playerCrownsArr = playerGridArr.filter(
+          (cell) => cell.value == "Crown"
+        )
+        const result = checkPlayerWin([...playerCrownsArr, cell], puzzleGridArr)
+        console.log("RESULT: ", result)
+      }
     }
 
     if (clickType == "right") {
@@ -326,6 +383,7 @@ export const Board = () => {
           })
         )
       )
+
       setPlayerGridArr((prevData) => {
         const exists = prevData.some(
           (item) => item.row === cell.row && item.col === cell.col
