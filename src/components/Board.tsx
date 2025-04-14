@@ -132,7 +132,6 @@ const generatePuzzleGridArr = (gridArr: Array<Array<GridCellType>>) => {
       pickedCols = new Set<number>()
       puzzleBlockArr = []
       i = -1
-      // gridArr.forEach((row) => row.fill("."))
       gridArr.forEach((row) => {
         row.forEach((cell) => {
           cell.value = "."
@@ -140,6 +139,7 @@ const generatePuzzleGridArr = (gridArr: Array<Array<GridCellType>>) => {
       })
     } else {
       gridArr[i][col].value = "x"
+      gridArr[i][col].color = colorArr[i]
       prevCol = col
       const puzzleBlock = {
         row: i,
@@ -169,7 +169,6 @@ const getCellPositionToAttachToCurCell = (
   curCell: GridCellType,
   initialGridArr: Array<Array<GridCellType>>
 ) => {
-  console.log("attache cell to this cell ", curCell, getRandomSide())
   const randomPosition = getRandomSide()
 
   //check if it is valid to gorw
@@ -202,12 +201,6 @@ const createPuzzleBlocks = (
   puzzleGridArr: Array<Array<GridCellType>>,
   initialGridArr: Array<Array<GridCellType>>
 ) => {
-  console.log(
-    "TODO : work on create puzzle blocks ",
-    puzzleGridArr,
-    initialGridArr
-  )
-
   let puzzleSize = puzzleGridArr.length
   const gridSize = gameSize * gameSize
 
@@ -234,56 +227,46 @@ const createPuzzleBlocks = (
       }
       puzzleGridArr[i].push(newCell)
       initialGridArr[newCellPosition.row][newCellPosition.col].value = "puzzle"
+      initialGridArr[newCellPosition.row][newCellPosition.col].color =
+        newCell.color
+
       puzzleSize += 1
     }
   }
 
-  // while (puzzleSize < gridSize + 1) {
-  //   for (let i = 0; i < puzzleGridArr.length; i++) {
-  //     if (puzzleSize < gridSize + 1) {
-  //       // get a random cell from
-  //       const randomCell =
-  //         puzzleGridArr[i][Math.floor(Math.random() * puzzleGridArr[i].length)]
+  while (puzzleSize < gridSize + 1) {
+    for (let i = 0; i < puzzleGridArr.length; i++) {
+      // get a random cell from
+      const randomCell =
+        puzzleGridArr[i][Math.floor(Math.random() * puzzleGridArr[i].length)]
 
-  //       const newCellPosition = getCellPositionToAttachToCurCell(
-  //         randomCell,
-  //         initialGridArr
-  //       )
+      const newCellPosition = getCellPositionToAttachToCurCell(
+        randomCell,
+        initialGridArr
+      )
 
-  //       if (newCellPosition.col !== null && newCellPosition.row !== null) {
-  //         const newCell = {
-  //           col: newCellPosition.col,
-  //           row: newCellPosition.row,
-  //           value: ".",
-  //           color: puzzleGridArr[i][0].color,
-  //         }
-  //         puzzleGridArr[i].push(newCell)
-  //         initialGridArr[newCellPosition.row][newCellPosition.col].value =
-  //           "puzzle"
-  //         puzzleSize += 1
-  //         console.log("Puzzle Size: ", puzzleSize)
-  //       }
-  //     }
-  //   }
-  // }
+      if (
+        newCellPosition.col !== null &&
+        newCellPosition.row !== null &&
+        puzzleSize < gridSize + 1
+      ) {
+        const newCell = {
+          col: newCellPosition.col,
+          row: newCellPosition.row,
+          value: ".",
+          color: puzzleGridArr[i][0].color,
+        }
+        puzzleGridArr[i].push(newCell)
+        initialGridArr[newCellPosition.row][newCellPosition.col].value =
+          "puzzle"
+        initialGridArr[newCellPosition.row][newCellPosition.col].color =
+          newCell.color
 
-  console.log("puzzle now: ", puzzleGridArr)
-}
-
-const isEmptySpaceToGrow = (
-  puzzleGridArr: Array<Array<GridCellType>>,
-  gameSize: number
-) => {
-  let curGridSize = 0
-  for (let i = 0; i < puzzleGridArr.length; i++) {
-    curGridSize += puzzleGridArr[i].length
+        puzzleSize += 1
+        if (puzzleSize == gridSize) return
+      }
+    }
   }
-
-  console.log("grid Size: ", curGridSize)
-  if (curGridSize == gameSize * gameSize) {
-    return false
-  }
-  return true
 }
 
 const colorArr = ["red", "blue", "pink", "white", "green"]
@@ -295,16 +278,19 @@ export const Board = () => {
 
   const gameSize = 5
   const initialGridArr = createGameGridArr(gameSize) //fill with .
-  // const crownPostionsArr = generateCrownsonGridArr(initialGridArr)
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr)
-  const puzzleBlocksArr = createPuzzleBlocks(puzzleGridArr, initialGridArr)
+  console.log("Before Puzzle Grid arr: ", puzzleGridArr)
 
-  // const blockPuzzleArr = createPuzzleBlocks(crownPostionsArr, initialGridArr)
+  createPuzzleBlocks(puzzleGridArr, initialGridArr)
+  console.log("Puzzle Grid arr: ", puzzleGridArr)
 
+  const cellClick = (cell: GridCellType) => {
+    console.log("cell click ", cell)
+  }
   return (
     <div>
       BOARDDD
-      <Grid grid={initialGridArr} />
+      <Grid grid={initialGridArr} cellClick={cellClick} />
     </div>
   )
 }

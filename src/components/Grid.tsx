@@ -3,10 +3,10 @@ import { GridCell } from "./GridCell"
 
 type GridProps = {
   grid: Array<Array<GridCellType>>
+  cellClick: (cell: GridCellType) => void
 }
 
-export const Grid = ({ grid }: GridProps) => {
-  console.log("grid: ", grid)
+export const Grid = ({ grid, cellClick }: GridProps) => {
   return (
     <div>
       {grid.map((row, index) => {
@@ -24,7 +24,15 @@ export const Grid = ({ grid }: GridProps) => {
             }}
           >
             {row.map((cell, index) => {
-              return <GridCell key={index} cellData={cell} />
+              // const cellExists = puzzleBlocks.some((row) =>
+              //   row.some(
+              //     (cell) => cell.row === cell.row && cell.col === cell.col
+              //   )
+              // )
+              // console.log("CELL EXIST: ", cellExists)
+              return (
+                <GridCell key={index} cellData={cell} cellClick={cellClick} />
+              )
             })}
           </div>
         )
