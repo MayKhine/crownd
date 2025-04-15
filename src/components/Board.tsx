@@ -9,6 +9,9 @@ export type GridCellType = {
   color?: string
   user?: string
 }
+
+const colorArr = ["#ff99c8", "#fcf6bd", "#d0f4de", "#a9def9", "#e4c1f9"]
+
 const createGameGridArr = (gameSize: number, value: string) => {
   const grid = []
   for (let row = 0; row < gameSize; row++) {
@@ -46,78 +49,6 @@ const getRandomNumberUnique = (
   picked.add(randomNum) // Mark as picked
   return randomNum
 }
-
-// const generateCrownsonGridArr = (gridArr: Array<Array<GridCellType>>) => {
-//   let pickedCols = new Set<number>() // Keep track of picked columns
-//   let crownsArr = []
-//   let prevCol: number = -999
-
-//   for (let i = 0; i < gridArr.length; i++) {
-//     const col = getRandomNumberUnique(gridArr.length, pickedCols, prevCol)
-//     if (col === "reset") {
-//       pickedCols = new Set<number>()
-//       crownsArr = []
-//       i = -1
-//       // gridArr.forEach((row) => row.fill("."))
-//       gridArr.forEach((row) => {
-//         row.forEach((cell) => {
-//           cell.value = "."
-//         })
-//       })
-//     } else {
-//       gridArr[i][col].value = "x"
-//       prevCol = col
-//       // xArr.push({ x: col, color: colorArr[i], xy: { x: col, y: i } })
-//       crownsArr.push({ row: i, col: col, value: "x" })
-//     }
-//   }
-
-//   return crownsArr
-// }
-
-// const checkIsValidToGrow = (
-//   xLocation: { x: number; y: number },
-//   gridArr: Array<Array<string>>
-//   // randomside: { placement: string; value: number }
-// ) => {
-//   const randomside = getRandomSide()
-//   //x
-//   if (randomside.placement == "row") {
-//     const updatedX = xLocation.x + randomside.value
-//     if (
-//       updatedX >= 0 &&
-//       updatedX < gridArr.length &&
-//       gridArr[xLocation.y][updatedX] == "."
-//     ) {
-//       return { x: updatedX, y: xLocation.y }
-//     }
-//   }
-
-//   //y
-//   if (randomside.placement == "col") {
-//     const updatedY = xLocation.y + randomside.value
-//     if (
-//       updatedY >= 0 &&
-//       updatedY < gridArr.length &&
-//       gridArr[updatedY][xLocation.x] == "."
-//     ) {
-//       return { x: xLocation.x, y: updatedY }
-//     }
-//   }
-
-//   return false
-// }
-
-// const checkSpaceLeft = (gridArr: Array<Array<string>>) => {
-//   for (let i = 0; i < gridArr.length; i++) {
-//     for (let x = 0; x < gridArr.length; x++) {
-//       if (gridArr[i][x] == ".") {
-//         return true
-//       }
-//     }
-//   }
-//   return false
-// }
 
 const generatePuzzleGridArr = (gridArr: Array<Array<GridCellType>>) => {
   let pickedCols = new Set<number>() // Keep track of picked columns
@@ -197,7 +128,8 @@ const getCellPositionToAttachToCurCell = (
 
 const createPuzzleBlocks = (
   puzzleGridArr: Array<Array<GridCellType>>,
-  initialGridArr: Array<Array<GridCellType>>
+  initialGridArr: Array<Array<GridCellType>>,
+  gameSize: number
 ) => {
   let puzzleSize = puzzleGridArr.length
   const gridSize = gameSize * gameSize
@@ -274,7 +206,6 @@ const playerCrownsCount = (playerArr: Array<GridCellType>) => {
 }
 
 const checkPlayerWin = (playerCrownsArr: Array<GridCellType>) => {
-  console.log("checkPlayerWin: ", playerCrownsArr)
   //check if there's more than one crown on each row , each col and diagonal
   const rowCheck = checkOnePerRow(playerCrownsArr)
   const colCheck = checkOnePerCol(playerCrownsArr)
@@ -352,17 +283,16 @@ const checkDiagonalCrowns = (playerCrownsArr: Array<GridCellType>) => {
   return true
 }
 
-const colorArr = ["red", "blue", "pink", "white", "green"]
-const gameSize = 5
-
-export const Board = () => {
+type BoardProps = {
+  gameSize: number
+}
+export const Board = ({ gameSize }: BoardProps) => {
   // x: Column
   // y: Row
 
-  const gameSize = 5
   const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr)
-  createPuzzleBlocks(puzzleGridArr, initialGridArr)
+  createPuzzleBlocks(puzzleGridArr, initialGridArr, gameSize)
   //puzzle grid arr is not in use
 
   const cellClick = (cell: GridCellType, clickType: string) => {
@@ -423,8 +353,9 @@ export const Board = () => {
         const result = checkPlayerWin([...playerCrownsArr, cell])
         if (result) {
           setToggleWin("win")
-        } else {
-          setToggleWin("lost")
+        }
+        if (!result) {
+          setToggleWin("lose")
         }
       }
     }

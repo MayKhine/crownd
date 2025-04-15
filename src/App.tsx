@@ -6,7 +6,7 @@ export const App = () => {
     <div>
       <Header />
       <div>
-        <Board />
+        <Board gameSize={5} />
       </div>
     </div>
   )
