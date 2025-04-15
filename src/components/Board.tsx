@@ -285,6 +285,8 @@ const playerCrownsCount = (playerArr: Array<GridCellType>) => {
 // }
 
 const getInvalidCrownPositions = (playerCrownsArr: GridCellType[]) => {
+  console.log("Get invalid crowns position: ", playerCrownsArr)
+
   const invalid = new Set<string>()
 
   const rowMap = new Map<number, string>()
@@ -342,6 +344,16 @@ const getInvalidCrownPositions = (playerCrownsArr: GridCellType[]) => {
   return invalid
 }
 
+const cellExists = (
+  arr: { row: number; col: number }[],
+  cell: { row: number; col: number }
+) => {
+  const result = arr.some(
+    (item) => item.row === cell.row && item.col === cell.col
+  )
+  console.log("CEll exists: ", result)
+  return result
+}
 type BoardProps = {
   gameSize: number
 }
@@ -353,33 +365,6 @@ export const Board = ({ gameSize }: BoardProps) => {
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr)
   createPuzzleBlocks(puzzleGridArr, initialGridArr, gameSize)
   //puzzle grid arr is not in use
-
-  // const updateInvalidSet = (cell: GridCellType) => {
-  //   const key = `${cell.row},${cell.col}`
-  //   const updatedInvalidCrownPosition = new Set(invalidCrownsPosition)
-
-  //   // remove the ones with cell or col
-  //   if (invalidCrownsPosition?.has(key)) {
-  //     updatedInvalidCrownPosition.delete(key)
-  //   }
-
-  //   invalidCrownsPosition?.forEach((invalidKey) => {
-  //     const [invalidRow, invalidCol] = invalidKey.split(",").map(Number)
-
-  //     if (
-  //       invalidRow === cell.row || // Same row
-  //       invalidCol === cell.col || // Same column
-  //       invalidRow - invalidCol === cell.row - cell.col || // Same diagonal (top-left to bottom-right)
-  //       invalidRow + invalidCol === cell.row + cell.col // Same diagonal (top-right to bottom-left)
-  //     ) {
-  //       updatedInvalidCrownPosition.delete(invalidKey)
-  //     }
-  //   })
-
-  //   setInvalidCrownPosition(updatedInvalidCrownPosition)
-
-  //   /// reset the invalid crown position from user input array
-  // }
 
   const cellClick = (cell: GridCellType, clickType: string) => {
     setToggleWin("")
@@ -433,46 +418,54 @@ export const Board = ({ gameSize }: BoardProps) => {
         }
       })
 
-      if (invalidCrownsPosition && invalidCrownsPosition.size > 0) {
-        let playerCrownsArr = playerGridArr.filter(
-          (cell) => cell.value == "Crown"
-        )
-        console.log("before", playerCrownsArr)
-
-        playerCrownsArr = playerCrownsArr.filter(
+      //check invalid after every crown placement
+      const playerCrownsArr = playerGridArr.filter(
+        (cell) => cell.value == "Crown"
+      )
+      let updatedInvalidPositions = new Set<string>()
+      // filter it if cell is also in the crown
+      if (cellExists(playerCrownsArr, cell)) {
+        const playerCrownsArr2 = playerCrownsArr.filter(
           (item) => !(item.row === cell.row && item.col === cell.col)
         )
 
-        console.log("updated player corwn arr", playerCrownsArr)
-        // const updatedPlayerCrownsArr = [...playerCrownsArr, cell]
-        // console.log("updatedPlayerCrownsArr", updatedPlayerCrownsArr)
-        const updatedInvalidPositions =
-          getInvalidCrownPositions(playerCrownsArr)
+        updatedInvalidPositions = getInvalidCrownPositions(playerCrownsArr2)
 
-        console.log("updated invalid position: ", updatedInvalidPositions)
         setInvalidCrownPosition(updatedInvalidPositions)
-      }
-
-      if (playerCrownsCount(playerGridArr) + 1 == gameSize) {
-        console.log("TO DO CHECK WIN STATE")
-        const playerCrownsArr = playerGridArr.filter(
-          (cell) => cell.value == "Crown"
-        )
-
-        const invalidPositions = getInvalidCrownPositions([
+      } else {
+        // add the cell to the array
+        updatedInvalidPositions = getInvalidCrownPositions([
           ...playerCrownsArr,
           cell,
         ])
-        if (invalidPositions.size == 0) {
-          console.log("win : ", invalidPositions)
-          setToggleWin("win")
-        }
-        if (invalidPositions.size > 0) {
-          console.log("lose : ", invalidPositions)
-          setInvalidCrownPosition(invalidPositions)
-          setToggleWin("lose")
-        }
+
+        setInvalidCrownPosition(updatedInvalidPositions)
       }
+
+      if (
+        playerCrownsCount(playerGridArr) + 1 == gameSize &&
+        updatedInvalidPositions.size == 0
+      ) {
+        setToggleWin(true)
+      } else {
+        setToggleWin(false)
+      }
+
+      // if (playerCrownsCount(playerGridArr) + 1 == gameSize && invalidCrownsPosition.size == 0) {
+      //   console.log("TO DO CHECK WIN STATE")
+      //   const playerCrownsArr = playerGridArr.filter(
+      //     (cell) => cell.value == "Crown"
+      //   )
+
+      //   const invalidPositions = getInvalidCrownPositions([
+      //     ...playerCrownsArr,
+      //     cell,
+      //   ])
+      //   if (invalidPositions.size == 0) {
+      //     console.log("win : ", invalidPositions)
+      //     setToggleWin("win")
+      //   }
+      // }
     }
 
     // right click: X
@@ -519,7 +512,7 @@ export const Board = ({ gameSize }: BoardProps) => {
   const [playerGridArr, setPlayerGridArr] = useState<
     Array<{ row: number; col: number; value: string; color?: string }>
   >([])
-  const [toggleWin, setToggleWin] = useState("")
+  const [toggleWin, setToggleWin] = useState(false)
   const [invalidCrownsPosition, setInvalidCrownPosition] =
     useState<Set<string>>()
 
@@ -527,8 +520,8 @@ export const Board = ({ gameSize }: BoardProps) => {
     <div>
       BOARDDD
       <div style={{ height: "3rem" }}>
-        {toggleWin == "win" && <div> WIN </div>}
-        {toggleWin == "lose" && <div> LOSE </div>}
+        {toggleWin && <div> WIN </div>}
+        {!toggleWin && <div> LOSE </div>}
       </div>
       <Grid
         grid={gameGridArr}
