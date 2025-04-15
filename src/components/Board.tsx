@@ -273,19 +273,19 @@ const playerCrownsCount = (playerArr: Array<GridCellType>) => {
   return total
 }
 
-const checkPlayerWin = (
-  playerCrownsArr: Array<GridCellType>,
-  puzzleGridArr: Array<Array<GridCellType>>
-) => {
+const checkPlayerWin = (playerCrownsArr: Array<GridCellType>) => {
   console.log("checkPlayerWin: ", playerCrownsArr)
   //check if there's more than one crown on each row , each col and diagonal
   const rowCheck = checkOnePerRow(playerCrownsArr)
   const colCheck = checkOnePerCol(playerCrownsArr)
-  const puzzleBlockCheck = checkOnePerPuzzleBlock(
-    playerCrownsArr,
-    puzzleGridArr
-  )
-  console.log("row chek: ", rowCheck, colCheck, puzzleBlockCheck)
+  const puzzleBlockCheck = checkOnePerPuzzleBlock(playerCrownsArr)
+  const diagonalCheck = checkDiagonalCrowns(playerCrownsArr)
+
+  if (rowCheck && colCheck && puzzleBlockCheck && diagonalCheck) {
+    return true
+  } else {
+    return false
+  }
 }
 
 const checkOnePerRow = (playerCrownsArr: Array<GridCellType>) => {
@@ -308,11 +308,48 @@ const checkOnePerCol = (playerCrownsArr: Array<GridCellType>) => {
   return true
 }
 
-const checkOnePerPuzzleBlock = (
-  playerCrownsArr: Array<GridCellType>,
-  puzzleBlockArr: Array<Array<GridCellType>>
-) => {
-  console.log("Check one per puzzle block ", playerCrownsArr, puzzleBlockArr)
+const checkOnePerPuzzleBlock = (playerCrownsArr: Array<GridCellType>) => {
+  const colors = new Set()
+  for (let i = 0; i < playerCrownsArr.length; i++) {
+    const cell = playerCrownsArr[i]
+    if (colors.has(cell.color)) return false
+    colors.add(cell.color)
+  }
+
+  return true
+}
+
+const checkDiagonalCrowns = (playerCrownsArr: Array<GridCellType>) => {
+  const crownPositions = new Set(
+    playerCrownsArr.map((cell) => `${cell.row},${cell.col}`)
+  )
+
+  const directions = [
+    [-1, -1],
+    [-1, 0],
+    [-1, 1],
+    [0, -1],
+    [0, 1],
+    [1, -1],
+    [1, 0],
+    [1, 1],
+  ]
+
+  for (let i = 0; i < playerCrownsArr.length; i++) {
+    const { row, col } = playerCrownsArr[i]
+
+    // Check all 8 directions around the crown
+
+    for (let x = 0; x < directions.length; x++) {
+      const [dr, dc] = directions[x]
+      const neighborKey = `${row + dr},${col + dc}`
+      if (crownPositions.has(neighborKey)) {
+        return false
+      }
+    }
+  }
+
+  return true
 }
 
 const colorArr = ["red", "blue", "pink", "white", "green"]
@@ -329,16 +366,18 @@ export const Board = () => {
   //puzzle grid arr is not in use
 
   const cellClick = (cell: GridCellType, clickType: string) => {
-    console.log("cell click ", cell, playerGridArr, clickType)
+    setToggleWin("")
 
-    // left click : Place  a crown
-    // right click : place a mark
-
+    // left click: Crown
     if (clickType == "left") {
       setGameGridArr((prevData) =>
         prevData.map((row, i) =>
           row.map((cellItem, x) => {
-            if (i === cell.row && x === cell.col) {
+            if (i === cell.row && x === cell.col && cell.user == "Crown") {
+              return { ...cellItem, user: "" }
+            }
+
+            if (i === cell.row && x === cell.col && cell.user != "Crown") {
               return { ...cellItem, user: "Crown" }
             }
             return cellItem
@@ -351,14 +390,28 @@ export const Board = () => {
           (item) => item.row === cell.row && item.col === cell.col
         )
 
-        if (exists) {
-          return prevData.map((item) =>
-            item.row === cell.row && item.col === cell.col
-              ? { ...item, value: "Crown" }
-              : item
+        if (cell.user == "Crown") {
+          return prevData.filter(
+            (item) => !(item.row == cell.row && item.col == cell.col)
           )
         } else {
-          return [...prevData, { row: cell.row, col: cell.col, value: "Crown" }]
+          if (exists) {
+            return prevData.map((item) =>
+              item.row === cell.row && item.col === cell.col
+                ? { ...item, value: "Crown", color: cell.color }
+                : item
+            )
+          } else {
+            return [
+              ...prevData,
+              {
+                row: cell.row,
+                col: cell.col,
+                value: "Crown",
+                color: cell.color,
+              },
+            ]
+          }
         }
       })
 
@@ -367,17 +420,25 @@ export const Board = () => {
         const playerCrownsArr = playerGridArr.filter(
           (cell) => cell.value == "Crown"
         )
-        const result = checkPlayerWin([...playerCrownsArr, cell], puzzleGridArr)
-        console.log("RESULT: ", result)
+        const result = checkPlayerWin([...playerCrownsArr, cell])
+        if (result) {
+          setToggleWin("win")
+        } else {
+          setToggleWin("lost")
+        }
       }
     }
 
+    // right click: X
     if (clickType == "right") {
       setGameGridArr((prevData) =>
         prevData.map((row, i) =>
           row.map((cellItem, x) => {
-            if (i === cell.row && x === cell.col) {
-              return { ...cellItem, user: "X Mark" }
+            if (i === cell.row && x === cell.col && cell.user == "X") {
+              return { ...cellItem, user: "" }
+            }
+            if (i === cell.row && x === cell.col && cell.user != "X") {
+              return { ...cellItem, user: "X" }
             }
             return cellItem
           })
@@ -389,29 +450,36 @@ export const Board = () => {
           (item) => item.row === cell.row && item.col === cell.col
         )
 
-        if (exists) {
-          return prevData.map((item) =>
-            item.row === cell.row && item.col === cell.col
-              ? { ...item, value: "X" }
-              : item
+        if (cell.user == "X") {
+          return prevData.filter(
+            (item) => !(item.row == cell.row && item.col == cell.col)
           )
         } else {
-          return [...prevData, { row: cell.row, col: cell.col, value: "X" }]
+          if (exists) {
+            return prevData.map((item) =>
+              item.row === cell.row && item.col === cell.col
+                ? { ...item, value: "X" }
+                : item
+            )
+          } else {
+            return [...prevData, { row: cell.row, col: cell.col, value: "X" }]
+          }
         }
       })
     }
-
-    console.log("player grid arr", playerGridArr)
   }
 
   const [gameGridArr, setGameGridArr] = useState(initialGridArr)
   const [playerGridArr, setPlayerGridArr] = useState<
-    Array<{ row: number; col: number; value: string }>
+    Array<{ row: number; col: number; value: string; color?: string }>
   >([])
+  const [toggleWin, setToggleWin] = useState("")
 
   return (
     <div>
       BOARDDD
+      {toggleWin == "win" && <div> WIN </div>}
+      {toggleWin == "lose" && <div> LOSE </div>}
       <Grid grid={gameGridArr} cellClick={cellClick} />
     </div>
   )

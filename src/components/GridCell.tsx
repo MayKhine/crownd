@@ -14,6 +14,7 @@ export const GridCell = ({ width, cellData, cellClick }: GridCellProps) => {
     border: "1px solid black",
     boxSizing: "border-box",
     display: "flex",
+    cursor: "pointer",
   }
 
   return (
