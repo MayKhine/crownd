@@ -13,11 +13,24 @@ export const App = () => {
   ]
 
   return (
-    <div>
+    <div style={{ ...pageContainerStyle }}>
       <Header />
       <div>
         <Board gameSize={5} colorArr={colorArr} />
       </div>
     </div>
   )
+}
+
+const pageContainerStyle: React.CSSProperties = {
+  // backgroundColor: "#0b2545",
+  width: "100%",
+  minHeight: "100vh",
+  height: "auto",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  paddingTop: "2rem",
+  paddingBottom: "2rem",
+  boxSizing: "border-box",
 }

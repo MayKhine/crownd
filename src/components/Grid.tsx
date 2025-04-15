@@ -16,7 +16,12 @@ export const Grid = ({
 }: GridProps) => {
   console.log("game size: ", gameSize)
   return (
-    <div>
+    <div
+      style={{
+        width: "max-content",
+        border: "5px solid black",
+      }}
+    >
       {grid.map((row, index) => {
         return (
           <div
@@ -24,11 +29,8 @@ export const Grid = ({
             style={{
               display: "grid",
               gridTemplateColumns: `repeat(${gameSize}, 1fr)`,
-              // display: "flex",
-              // flexGrow: "0",
               columnGap: "0",
               backgroundColor: "pink",
-              // width: "25rem", // one cell is 5rem
               width: `${gameSize * 5}rem`,
               overflow: "hidden",
               boxSizing: "border-box",
@@ -36,8 +38,7 @@ export const Grid = ({
           >
             {row.map((cell, index) => {
               const key = `${cell.row},${cell.col}`
-              // console.log(invalidCrownsPosition)
-              // invalidCrownsPosition.has(`${cell.row},${cell.col}`)
+
               const invalid =
                 invalidCrownsPosition && invalidCrownsPosition.has(key)
                   ? true

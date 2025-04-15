@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Grid } from "./Grid"
+import { Popup } from "./Popup"
 
 export type GridCellType = {
   row: number
@@ -495,12 +496,22 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
         (cell) => cell.value == "Crown"
       )
       let updatedInvalidPositions = new Set<string>()
+
       if (cellExists(playerCrownsArr, cell)) {
         const playerCrownsArr2 = playerCrownsArr.filter(
           (item) => !(item.row === cell.row && item.col === cell.col)
         )
         updatedInvalidPositions = getInvalidCrownPositions(playerCrownsArr2)
         setInvalidCrownPosition(updatedInvalidPositions)
+
+        // if (
+        //   playerCrownsArr2.length == gameSize &&
+        //   updatedInvalidPositions.size == 0
+        // ) {
+        //   setToggleWin(true)
+        // } else {
+        //   setToggleWin(false)
+        // }
       }
     }
   }
@@ -515,17 +526,31 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
 
   return (
     <div>
-      BOARDDD
       <div style={{ height: "3rem" }}>
-        {toggleWin && <div> WIN </div>}
-        {!toggleWin && <div> LOSE </div>}
+        {toggleWin && (
+          <Popup>
+            <div style={{ ...popupStyle }}> WIN </div>
+          </Popup>
+        )}
       </div>
-      <Grid
-        grid={gameGridArr}
-        cellClick={cellClick}
-        invalidCrownsPosition={invalidCrownsPosition ?? new Set()}
-        gameSize={gameSize}
-      />
+      <div style={{ ...gameGridStyle }}>
+        <Grid
+          grid={gameGridArr}
+          cellClick={cellClick}
+          invalidCrownsPosition={invalidCrownsPosition ?? new Set()}
+          gameSize={gameSize}
+        />
+      </div>
     </div>
   )
+}
+
+const gameGridStyle: React.CSSProperties = {
+  backgroundColor: "pink",
+  width: "max-content",
+}
+
+const popupStyle: React.CSSProperties = {
+  backgroundColor: "red",
+  zIndex: "2",
 }
