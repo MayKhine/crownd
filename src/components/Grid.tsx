@@ -5,9 +5,16 @@ type GridProps = {
   grid: Array<Array<GridCellType>>
   cellClick: (cell: GridCellType, clickType: string) => void
   invalidCrownsPosition: Set<string>
+  gameSize: number
 }
 
-export const Grid = ({ grid, cellClick, invalidCrownsPosition }: GridProps) => {
+export const Grid = ({
+  grid,
+  cellClick,
+  invalidCrownsPosition,
+  gameSize,
+}: GridProps) => {
+  console.log("game size: ", gameSize)
   return (
     <div>
       {grid.map((row, index) => {
@@ -16,10 +23,13 @@ export const Grid = ({ grid, cellClick, invalidCrownsPosition }: GridProps) => {
             key={index}
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(5, 1fr)",
+              gridTemplateColumns: `repeat(${gameSize}, 1fr)`,
+              // display: "flex",
+              // flexGrow: "0",
               columnGap: "0",
               backgroundColor: "pink",
-              width: "25rem", // one cell is 5rem
+              // width: "25rem", // one cell is 5rem
+              width: `${gameSize * 5}rem`,
               overflow: "hidden",
               boxSizing: "border-box",
             }}

@@ -10,8 +10,6 @@ export type GridCellType = {
   user?: string
 }
 
-const colorArr = ["#ff99c8", "#fcf6bd", "#d0f4de", "#a9def9", "#e4c1f9"]
-
 const createGameGridArr = (gameSize: number, value: string) => {
   const grid = []
   for (let row = 0; row < gameSize; row++) {
@@ -50,7 +48,10 @@ const getRandomNumberUnique = (
   return randomNum
 }
 
-const generatePuzzleGridArr = (gridArr: Array<Array<GridCellType>>) => {
+const generatePuzzleGridArr = (
+  gridArr: Array<Array<GridCellType>>,
+  colorArr: Array<string>
+) => {
   let pickedCols = new Set<number>() // Keep track of picked columns
   let puzzleBlockArr = []
   let prevCol: number = -999
@@ -356,13 +357,14 @@ const cellExists = (
 }
 type BoardProps = {
   gameSize: number
+  colorArr: Array<string>
 }
-export const Board = ({ gameSize }: BoardProps) => {
+export const Board = ({ gameSize, colorArr }: BoardProps) => {
   // x: Column
   // y: Row
 
   const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
-  const puzzleGridArr = generatePuzzleGridArr(initialGridArr)
+  const puzzleGridArr = generatePuzzleGridArr(initialGridArr, colorArr)
   createPuzzleBlocks(puzzleGridArr, initialGridArr, gameSize)
   //puzzle grid arr is not in use
 
@@ -522,6 +524,7 @@ export const Board = ({ gameSize }: BoardProps) => {
         grid={gameGridArr}
         cellClick={cellClick}
         invalidCrownsPosition={invalidCrownsPosition ?? new Set()}
+        gameSize={gameSize}
       />
     </div>
   )
