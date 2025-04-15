@@ -1,6 +1,7 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Grid } from "./Grid"
 import { Popup } from "./Popup"
+import { WinCard } from "./WinCard"
 
 export type GridCellType = {
   row: number
@@ -201,11 +202,11 @@ const createPuzzleBlocks = (
   }
 }
 
-const playerCrownsCount = (playerArr: Array<GridCellType>) => {
-  let total = 0
-  playerArr.forEach((cell) => (cell.value == "Crown" ? (total += 1) : total))
-  return total
-}
+// const playerCrownsCount = (playerArr: Array<GridCellType>) => {
+//   let total = 0
+//   playerArr.forEach((cell) => (cell.value == "Crown" ? (total += 1) : total))
+//   return total
+// }
 
 // const checkPlayerWin = (playerCrownsArr: Array<GridCellType>) => {
 //   //check if there's more than one crown on each row , each col and diagonal
@@ -356,6 +357,7 @@ const cellExists = (
   console.log("CEll exists: ", result)
   return result
 }
+
 type BoardProps = {
   gameSize: number
   colorArr: Array<string>
@@ -423,6 +425,7 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
       const playerCrownsArr = playerGridArr.filter(
         (cell) => cell.value == "Crown"
       )
+
       let updatedInvalidPositions = new Set<string>()
       // filter it if cell is also in the crown
       if (cellExists(playerCrownsArr, cell)) {
@@ -443,14 +446,14 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
         setInvalidCrownPosition(updatedInvalidPositions)
       }
 
-      if (
-        playerCrownsCount(playerGridArr) + 1 == gameSize &&
-        updatedInvalidPositions.size == 0
-      ) {
-        setToggleWin(true)
-      } else {
-        setToggleWin(false)
-      }
+      // if (
+      //   playerCrownsCount(playerGridArr) + 1 == gameSize &&
+      //   updatedInvalidPositions.size == 0
+      // ) {
+      //   setToggleWin(true)
+      // } else {
+      //   setToggleWin(false)
+      // }
     }
 
     // right click: X
@@ -503,15 +506,6 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
         )
         updatedInvalidPositions = getInvalidCrownPositions(playerCrownsArr2)
         setInvalidCrownPosition(updatedInvalidPositions)
-
-        // if (
-        //   playerCrownsArr2.length == gameSize &&
-        //   updatedInvalidPositions.size == 0
-        // ) {
-        //   setToggleWin(true)
-        // } else {
-        //   setToggleWin(false)
-        // }
       }
     }
   }
@@ -524,12 +518,39 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
   const [invalidCrownsPosition, setInvalidCrownPosition] =
     useState<Set<string>>()
 
+  useEffect(() => {
+    const playerCrowns = playerGridArr.filter((cell) => cell.value === "Crown")
+    const invalidPositions = getInvalidCrownPositions(playerCrowns)
+
+    if (playerCrowns.length === gameSize && invalidPositions.size === 0) {
+      setToggleWin(true)
+    } else {
+      setToggleWin(false)
+    }
+
+    setInvalidCrownPosition(invalidPositions)
+  }, [playerGridArr, gameSize])
+
   return (
     <div>
       <div style={{ height: "3rem" }}>
         {toggleWin && (
-          <Popup>
-            <div style={{ ...popupStyle }}> WIN </div>
+          <Popup
+            closePopup={() => {
+              setToggleWin(false)
+            }}
+          >
+            <div
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation()
+              }}
+            >
+              <WinCard
+                closePopup={() => {
+                  setToggleWin(false)
+                }}
+              />
+            </div>
           </Popup>
         )}
       </div>
@@ -548,9 +569,4 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
 const gameGridStyle: React.CSSProperties = {
   backgroundColor: "pink",
   width: "max-content",
-}
-
-const popupStyle: React.CSSProperties = {
-  backgroundColor: "red",
-  zIndex: "2",
 }

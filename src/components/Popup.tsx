@@ -1,22 +1,38 @@
 type PopupProps = {
   children: React.ReactNode
+  closePopup: () => void
 }
-export const Popup = ({ children }: PopupProps) => {
+export const Popup = ({ children, closePopup }: PopupProps) => {
   return (
-    <div>
-      <div style={{ ...popupStyle }}> </div>
-      {children}
+    <div onClick={closePopup} style={{ ...bgStyle }}>
+      <div
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation()
+        }}
+        style={{ ...childrenStyle }}
+      >
+        {children}
+        {/* <div style={{ ...childrenStyle }}>{children}</div> */}
+      </div>
     </div>
   )
 }
-const popupStyle: React.CSSProperties = {
+const bgStyle: React.CSSProperties = {
   width: "100%",
-  minHeight: "100vh",
+  minHeight: "100%",
   height: "100%",
-  backgroundColor: "green",
   zIndex: "1",
   left: "0",
   top: "0",
   position: "fixed",
-  opacity: "20%",
+  display: "flex",
+  justifyContent: "center",
+  backgroundColor: "rgb(244, 243, 234, 0.8)",
+}
+
+const childrenStyle: React.CSSProperties = {
+  backgroundColor: "pink",
+  zIndex: 1001,
+  marginTop: "10rem",
+  height: "max-content",
 }
