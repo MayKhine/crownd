@@ -23,7 +23,7 @@ export const App = () => {
 }
 
 const pageContainerStyle: React.CSSProperties = {
-  // backgroundColor: "#0b2545",
+  backgroundColor: "#0b2545",
   width: "100%",
   minHeight: "100vh",
   height: "auto",

@@ -1,12 +1,22 @@
+import { IoCloseCircleOutline } from "react-icons/io5"
+
 type WinCardProps = {
   closePopup: () => void
   time?: string
 }
 export const WinCard = ({ closePopup, time }: WinCardProps) => {
   return (
-    <div style={{ ...winCardStyle }} onClick={closePopup}>
-      You win
-      {time}
+    <div style={{ ...winCardStyle }}>
+      <IoCloseCircleOutline
+        onClick={closePopup}
+        style={{ ...closeIconStyle }}
+        size={30}
+      />
+
+      <div style={{ ...textContainerStyle }}>
+        <div> You win! </div>
+        <div> time: {time}</div>
+      </div>
     </div>
   )
 }
@@ -16,7 +26,23 @@ const winCardStyle: React.CSSProperties = {
   zIndex: "2",
   width: "15rem",
   height: "10rem",
-  borderRadius: ".5rem",
+  borderRadius: "1rem",
   padding: "1rem",
   boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
+}
+
+const closeIconStyle: React.CSSProperties = {
+  cursor: "pointer",
+  alignSelf: "flex-end",
+}
+
+const textContainerStyle: React.CSSProperties = {
+  display: "flex",
+  height: "100%",
+  flexDirection: "column",
+  justifyContent: "center",
+  alignItems: "center",
+  // backgroundColor: "red",
 }

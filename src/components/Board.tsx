@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { Grid } from "./Grid"
 import { Popup } from "./Popup"
 import { WinCard } from "./WinCard"
+import { MdRestartAlt } from "react-icons/md"
+import { FiClock } from "react-icons/fi"
 
 export type GridCellType = {
   row: number
@@ -288,8 +290,6 @@ const createPuzzleBlocks = (
 // }
 
 const getInvalidCrownPositions = (playerCrownsArr: GridCellType[]) => {
-  console.log("Get invalid crowns position: ", playerCrownsArr)
-
   const invalid = new Set<string>()
 
   const rowMap = new Map<number, string>()
@@ -362,6 +362,7 @@ type BoardProps = {
   gameSize: number
   colorArr: Array<string>
 }
+
 export const Board = ({ gameSize, colorArr }: BoardProps) => {
   // x: Column
   // y: Row
@@ -369,9 +370,60 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
   const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr, colorArr)
   createPuzzleBlocks(puzzleGridArr, initialGridArr, gameSize)
-  //puzzle grid arr is not in use
+  const [gameGridArr, setGameGridArr] = useState(initialGridArr)
+  const [playerGridArr, setPlayerGridArr] = useState<
+    Array<{ row: number; col: number; value: string; color?: string }>
+  >([])
+  const [invalidCrownsPosition, setInvalidCrownPosition] =
+    useState<Set<string>>()
+
+  const [toggleWin, setToggleWin] = useState(false)
+  const [toggleRestart, setToggleRestart] = useState(false)
+  const [startTimer, setStartTimer] = useState(false)
+  const [time, setTimeSec] = useState(0)
+  useEffect(() => {
+    const playerCrowns = playerGridArr.filter((cell) => cell.value === "Crown")
+    const invalidPositions = getInvalidCrownPositions(playerCrowns)
+
+    if (playerCrowns.length === gameSize && invalidPositions.size === 0) {
+      setToggleWin(true)
+      setStartTimer(false)
+    } else {
+      setToggleWin(false)
+    }
+
+    setInvalidCrownPosition(invalidPositions)
+  }, [playerGridArr, gameSize])
+
+  useEffect(() => {
+    const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
+    const puzzleGridArr = generatePuzzleGridArr(initialGridArr, colorArr)
+    createPuzzleBlocks(puzzleGridArr, initialGridArr, gameSize)
+
+    setGameGridArr(initialGridArr)
+    setPlayerGridArr([])
+    setToggleWin(false)
+    setInvalidCrownPosition(new Set<string>())
+    setStartTimer(false) //stop the timer
+    setTimeSec(0) // reset the time
+  }, [toggleRestart])
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval>
+
+    if (startTimer) {
+      timer = setInterval(() => {
+        setTimeSec((prev) => prev + 1)
+      }, 1000)
+    }
+
+    return () => clearInterval(timer)
+  }, [startTimer])
 
   const cellClick = (cell: GridCellType, clickType: string) => {
+    if (!startTimer) {
+      setStartTimer(true)
+    }
     // left click: Crown
     if (clickType == "left") {
       // update the invalid set
@@ -445,15 +497,6 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
 
         setInvalidCrownPosition(updatedInvalidPositions)
       }
-
-      // if (
-      //   playerCrownsCount(playerGridArr) + 1 == gameSize &&
-      //   updatedInvalidPositions.size == 0
-      // ) {
-      //   setToggleWin(true)
-      // } else {
-      //   setToggleWin(false)
-      // }
     }
 
     // right click: X
@@ -509,31 +552,29 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
       }
     }
   }
-
-  const [gameGridArr, setGameGridArr] = useState(initialGridArr)
-  const [playerGridArr, setPlayerGridArr] = useState<
-    Array<{ row: number; col: number; value: string; color?: string }>
-  >([])
-  const [toggleWin, setToggleWin] = useState(false)
-  const [invalidCrownsPosition, setInvalidCrownPosition] =
-    useState<Set<string>>()
-
-  useEffect(() => {
-    const playerCrowns = playerGridArr.filter((cell) => cell.value === "Crown")
-    const invalidPositions = getInvalidCrownPositions(playerCrowns)
-
-    if (playerCrowns.length === gameSize && invalidPositions.size === 0) {
-      setToggleWin(true)
-    } else {
-      setToggleWin(false)
-    }
-
-    setInvalidCrownPosition(invalidPositions)
-  }, [playerGridArr, gameSize])
-
   return (
     <div>
       <div style={{ height: "3rem" }}>
+        <div
+          style={{
+            backgroundColor: "pink",
+            color: "white",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <FiClock color="white" size={25} /> {time}
+          </div>
+          <MdRestartAlt
+            color="white"
+            size={30}
+            onClick={() => {
+              console.log("restart the game")
+              setToggleRestart(!toggleRestart)
+            }}
+          />
+        </div>
         {toggleWin && (
           <Popup
             closePopup={() => {

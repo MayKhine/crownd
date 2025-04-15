@@ -14,7 +14,6 @@ export const Grid = ({
   invalidCrownsPosition,
   gameSize,
 }: GridProps) => {
-  console.log("game size: ", gameSize)
   return (
     <div
       style={{

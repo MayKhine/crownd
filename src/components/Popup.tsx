@@ -31,7 +31,7 @@ const bgStyle: React.CSSProperties = {
 }
 
 const childrenStyle: React.CSSProperties = {
-  backgroundColor: "pink",
+  // backgroundColor: "pink",
   zIndex: 1001,
   marginTop: "10rem",
   height: "max-content",
