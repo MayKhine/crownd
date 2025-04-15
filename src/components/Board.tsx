@@ -367,8 +367,6 @@ export const Board = ({ gameSize }: BoardProps) => {
   //puzzle grid arr is not in use
 
   const cellClick = (cell: GridCellType, clickType: string) => {
-    setToggleWin("")
-
     // left click: Crown
     if (clickType == "left") {
       // update the invalid set
@@ -450,22 +448,6 @@ export const Board = ({ gameSize }: BoardProps) => {
       } else {
         setToggleWin(false)
       }
-
-      // if (playerCrownsCount(playerGridArr) + 1 == gameSize && invalidCrownsPosition.size == 0) {
-      //   console.log("TO DO CHECK WIN STATE")
-      //   const playerCrownsArr = playerGridArr.filter(
-      //     (cell) => cell.value == "Crown"
-      //   )
-
-      //   const invalidPositions = getInvalidCrownPositions([
-      //     ...playerCrownsArr,
-      //     cell,
-      //   ])
-      //   if (invalidPositions.size == 0) {
-      //     console.log("win : ", invalidPositions)
-      //     setToggleWin("win")
-      //   }
-      // }
     }
 
     // right click: X
@@ -505,6 +487,19 @@ export const Board = ({ gameSize }: BoardProps) => {
           }
         }
       })
+
+      // also check if player marks a crown to an X
+      const playerCrownsArr = playerGridArr.filter(
+        (cell) => cell.value == "Crown"
+      )
+      let updatedInvalidPositions = new Set<string>()
+      if (cellExists(playerCrownsArr, cell)) {
+        const playerCrownsArr2 = playerCrownsArr.filter(
+          (item) => !(item.row === cell.row && item.col === cell.col)
+        )
+        updatedInvalidPositions = getInvalidCrownPositions(playerCrownsArr2)
+        setInvalidCrownPosition(updatedInvalidPositions)
+      }
     }
   }
 
