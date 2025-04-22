@@ -586,6 +586,7 @@ export const Board = () => {
               display: "flex",
               flexDirection: "column",
               gap: ".2rem",
+              width: "7rem",
             }}
           >
             <div
@@ -599,21 +600,19 @@ export const Board = () => {
             </div>
           </div>
 
-          <div
-            style={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-            }}
-          >
-            <GameSizeDropDown changeGameSize={updateGameSize} />
-          </div>
+          <GameSizeDropDown changeGameSize={updateGameSize} />
           <div
             style={{
               height: "100%",
               gap: ".2rem",
               display: "flex",
               flexDirection: "column",
+              alignContent: "flex-end",
+              alignItems: "flex-end",
+              width: "7rem",
+
+              // flexGrow: "1",
+              // backgroundColor: "pink",
             }}
           >
             <div

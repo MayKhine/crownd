@@ -68,7 +68,7 @@ export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
   )
 }
 
-const containerStyle: React.CSSProperties = {}
+const containerStyle: React.CSSProperties = { height: "2rem" }
 
 const buttonStyle: React.CSSProperties = {
   backgroundColor: "#214065",
@@ -86,19 +86,19 @@ const buttonStyle: React.CSSProperties = {
   fontSize: "1rem",
   width: "5rem",
   color: "#fdfffc",
+  height: "2rem",
 }
 
 const dropdownStyle: React.CSSProperties = {
   zIndex: "2",
-  position: "absolute",
+  position: "relative",
   backgroundColor: "#214065",
   fontSize: "1rem",
-  width: "100%",
+  width: "5rem",
   display: "flex",
   flexDirection: "column",
   borderRadius: ".5rem",
   padding: ".5rem",
-  // boxSizing: "content-box",
   boxSizing: "border-box",
   gap: ".5rem",
 }

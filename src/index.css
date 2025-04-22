@@ -123,7 +123,7 @@ h4 {
 
 @media (max-width: 670px) {
   .pageContainer {
-    width: auto;
+    width: 100%;
     height: auto;
     padding-left: 0;
     padding-right: 0;
