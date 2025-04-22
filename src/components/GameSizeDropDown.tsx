@@ -2,7 +2,7 @@ import { useState } from "react"
 import { MdKeyboardArrowDown } from "react-icons/md"
 
 type GameSizeDropDownProps = {
-  changeGameSize: (size: string) => void
+  changeGameSize: (size: number) => void
 }
 
 export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
@@ -30,7 +30,7 @@ export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
           <button
             style={{ ...dropdownButtonStyle }}
             onClick={() => {
-              changeGameSize("small")
+              changeGameSize(3)
               setSelectGameSize("small")
               setDropDown(false)
             }}
@@ -40,7 +40,7 @@ export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
           <button
             style={{ ...dropdownButtonStyle }}
             onClick={() => {
-              changeGameSize("med")
+              changeGameSize(5)
               setSelectGameSize("med")
               setDropDown(false)
             }}
@@ -50,7 +50,7 @@ export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
           <button
             style={{ ...dropdownButtonStyle }}
             onClick={() => {
-              changeGameSize("large")
+              changeGameSize(7)
               setSelectGameSize("large")
               setDropDown(false)
             }}

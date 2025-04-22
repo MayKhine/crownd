@@ -368,10 +368,10 @@ type BoardProps = {
   changeGameSize: (size: string) => void
 }
 
-export const Board = ({ gameSize: initialGameSize, colorArr }: BoardProps) => {
+export const Board = ({ colorArr }: BoardProps) => {
   // x: Column
   // y: Row
-  const [gameSize, setGameSize] = useState(5)
+  const [gameSize, setGameSize] = useState(4)
 
   const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr, colorArr)
@@ -414,7 +414,7 @@ export const Board = ({ gameSize: initialGameSize, colorArr }: BoardProps) => {
     setInvalidCrownPosition(new Set<string>())
     setStartTimer(false) //stop the timer
     setTimeSec(0) // reset the time
-  }, [gameSize, toggleRestart])
+  }, [toggleRestart])
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>
@@ -561,6 +561,11 @@ export const Board = ({ gameSize: initialGameSize, colorArr }: BoardProps) => {
     }
   }
 
+  const updateGameSize = (newGameSize: number) => {
+    setToggleRestart(true)
+    setGameSize(newGameSize)
+  }
+
   return (
     <div>
       <div>
@@ -598,11 +603,7 @@ export const Board = ({ gameSize: initialGameSize, colorArr }: BoardProps) => {
               transform: "translateX(-50%)",
             }}
           >
-            <GameSizeDropDown
-              changeGameSize={() => {
-                setGameSize(7)
-              }}
-            />
+            <GameSizeDropDown changeGameSize={updateGameSize} />
           </div>
           <div
             style={{
