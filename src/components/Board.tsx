@@ -4,6 +4,10 @@ import { Popup } from "./Popup"
 import { WinCard } from "./WinCard"
 import { MdRestartAlt } from "react-icons/md"
 import { FiClock } from "react-icons/fi"
+import { formatTime } from "../helperFunctions"
+import { HowToCard } from "./HowToCard"
+import { AiOutlineQuestion } from "react-icons/ai"
+import { GameSizeDropDown } from "./GameSizeDropDown"
 
 export type GridCellType = {
   row: number
@@ -361,11 +365,13 @@ const cellExists = (
 type BoardProps = {
   gameSize: number
   colorArr: Array<string>
+  changeGameSize: (size: string) => void
 }
 
-export const Board = ({ gameSize, colorArr }: BoardProps) => {
+export const Board = ({ gameSize: initialGameSize, colorArr }: BoardProps) => {
   // x: Column
   // y: Row
+  const [gameSize, setGameSize] = useState(5)
 
   const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr, colorArr)
@@ -381,6 +387,8 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
   const [toggleRestart, setToggleRestart] = useState(false)
   const [startTimer, setStartTimer] = useState(false)
   const [time, setTimeSec] = useState(0)
+  const [toggleHowTo, setToggleHowTo] = useState(false)
+
   useEffect(() => {
     const playerCrowns = playerGridArr.filter((cell) => cell.value === "Crown")
     const invalidPositions = getInvalidCrownPositions(playerCrowns)
@@ -393,7 +401,7 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
     }
 
     setInvalidCrownPosition(invalidPositions)
-  }, [playerGridArr, gameSize])
+  }, [playerGridArr])
 
   useEffect(() => {
     const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
@@ -406,7 +414,7 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
     setInvalidCrownPosition(new Set<string>())
     setStartTimer(false) //stop the timer
     setTimeSec(0) // reset the time
-  }, [toggleRestart])
+  }, [gameSize, toggleRestart])
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>
@@ -552,28 +560,88 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
       }
     }
   }
+
   return (
     <div>
-      <div style={{ height: "3rem" }}>
+      <div>
         <div
           style={{
-            backgroundColor: "pink",
             color: "white",
             display: "flex",
             justifyContent: "space-between",
+            alignItems: "flex-end",
+            paddingBottom: ".5rem",
           }}
         >
-          <div>
-            <FiClock color="white" size={25} /> {time}
-          </div>
-          <MdRestartAlt
-            color="white"
-            size={30}
-            onClick={() => {
-              console.log("restart the game")
-              setToggleRestart(!toggleRestart)
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: ".2rem",
             }}
-          />
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: ".5rem",
+              }}
+            >
+              <FiClock color="white" size={25} /> <div>{formatTime(time)}</div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            <GameSizeDropDown
+              changeGameSize={() => {
+                setGameSize(7)
+              }}
+            />
+          </div>
+          <div
+            style={{
+              backgroundColor: "pink",
+              height: "100%",
+              gap: ".2rem",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <div
+              className="tooltip"
+              style={{
+                display: "flex",
+                cursor: "pointer",
+              }}
+            >
+              <AiOutlineQuestion
+                color="white"
+                size={30}
+                onClick={() => {
+                  setToggleHowTo(true)
+                }}
+              />
+              <span className="tooltiptext"> How to play</span>
+            </div>
+            <div className="tooltip">
+              <MdRestartAlt
+                style={{ cursor: "pointer" }}
+                color="white"
+                size={30}
+                onClick={() => {
+                  console.log("restart the game")
+                  setToggleRestart(!toggleRestart)
+                }}
+              ></MdRestartAlt>
+              <span className="tooltiptext">Restart</span>
+            </div>
+          </div>
         </div>
         {toggleWin && (
           <Popup
@@ -589,6 +657,27 @@ export const Board = ({ gameSize, colorArr }: BoardProps) => {
               <WinCard
                 closePopup={() => {
                   setToggleWin(false)
+                }}
+                time={time}
+              />
+            </div>
+          </Popup>
+        )}
+
+        {toggleHowTo && (
+          <Popup
+            closePopup={() => {
+              setToggleHowTo(false)
+            }}
+          >
+            <div
+              onClick={(e: React.MouseEvent) => {
+                e.stopPropagation()
+              }}
+            >
+              <HowToCard
+                closePopup={() => {
+                  setToggleHowTo(false)
                 }}
               />
             </div>

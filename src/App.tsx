@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Board } from "./components/Board"
 import { Header } from "./components/Header"
 
@@ -12,11 +13,31 @@ export const App = () => {
     "#ffdab9",
   ]
 
+  const [gameSize, setGameSize] = useState(5)
+
+  const changeGameSize = (size: string) => {
+    console.log("game size called")
+    if (size == "small") {
+      setGameSize(3)
+    }
+
+    if (size == "med") {
+      setGameSize(5)
+    }
+
+    if (size == "large") {
+      setGameSize(7)
+    }
+  }
   return (
     <div style={{ ...pageContainerStyle }}>
       <Header />
       <div>
-        <Board gameSize={5} colorArr={colorArr} />
+        <Board
+          gameSize={gameSize}
+          colorArr={colorArr}
+          changeGameSize={changeGameSize}
+        />
       </div>
     </div>
   )

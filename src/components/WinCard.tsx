@@ -1,8 +1,8 @@
 import { IoCloseCircleOutline } from "react-icons/io5"
-
+import { formatTime } from "../helperFunctions"
 type WinCardProps = {
   closePopup: () => void
-  time?: string
+  time: number
 }
 export const WinCard = ({ closePopup, time }: WinCardProps) => {
   return (
@@ -15,7 +15,7 @@ export const WinCard = ({ closePopup, time }: WinCardProps) => {
 
       <div style={{ ...textContainerStyle }}>
         <div> You win! </div>
-        <div> time: {time}</div>
+        <div> Solve Time: {formatTime(time)}</div>
       </div>
     </div>
   )
