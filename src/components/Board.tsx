@@ -18,6 +18,16 @@ export type GridCellType = {
   user?: string
 }
 
+const colorArr = [
+  "#ff99c8",
+  "#fcf6bd",
+  "#d0f4de",
+  "#a9def9",
+  "#e4c1f9",
+  "#c8b6ff",
+  "#ffdab9",
+]
+
 const createGameGridArr = (gameSize: number, value: string) => {
   const grid = []
   for (let row = 0; row < gameSize; row++) {
@@ -362,16 +372,10 @@ const cellExists = (
   return result
 }
 
-type BoardProps = {
-  gameSize: number
-  colorArr: Array<string>
-  changeGameSize: (size: string) => void
-}
-
-export const Board = ({ colorArr }: BoardProps) => {
+export const Board = () => {
   // x: Column
   // y: Row
-  const [gameSize, setGameSize] = useState(4)
+  const [gameSize, setGameSize] = useState(5)
 
   const initialGridArr = createGameGridArr(gameSize, ".") //fill with .
   const puzzleGridArr = generatePuzzleGridArr(initialGridArr, colorArr)
@@ -414,7 +418,7 @@ export const Board = ({ colorArr }: BoardProps) => {
     setInvalidCrownPosition(new Set<string>())
     setStartTimer(false) //stop the timer
     setTimeSec(0) // reset the time
-  }, [toggleRestart])
+  }, [toggleRestart, gameSize])
 
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>
@@ -562,7 +566,6 @@ export const Board = ({ colorArr }: BoardProps) => {
   }
 
   const updateGameSize = (newGameSize: number) => {
-    setToggleRestart(true)
     setGameSize(newGameSize)
   }
 
@@ -607,7 +610,6 @@ export const Board = ({ colorArr }: BoardProps) => {
           </div>
           <div
             style={{
-              backgroundColor: "pink",
               height: "100%",
               gap: ".2rem",
               display: "flex",
@@ -685,7 +687,7 @@ export const Board = ({ colorArr }: BoardProps) => {
           </Popup>
         )}
       </div>
-      <div style={{ ...gameGridStyle }}>
+      <div>
         <Grid
           grid={gameGridArr}
           cellClick={cellClick}
@@ -695,9 +697,4 @@ export const Board = ({ colorArr }: BoardProps) => {
       </div>
     </div>
   )
-}
-
-const gameGridStyle: React.CSSProperties = {
-  backgroundColor: "pink",
-  width: "max-content",
 }

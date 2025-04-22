@@ -16,9 +16,9 @@ export const GridCell = ({
   invalid,
 }: GridCellProps) => {
   const style: React.CSSProperties = {
-    width: width ? width : "5rem",
-    maxWidth: "5rem",
-    height: width ? width : "5rem",
+    width: width ? width : "4",
+    maxWidth: "4rem",
+    height: width ? width : "4rem",
     backgroundColor: invalid
       ? "red"
       : cellData.color

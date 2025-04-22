@@ -6,7 +6,7 @@ type GameSizeDropDownProps = {
 }
 
 export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
-  const [selectGameSize, setSelectGameSize] = useState("med")
+  const [selectGameSize, setSelectGameSize] = useState("small")
   const [dropDown, setDropDown] = useState(false)
   return (
     <div
@@ -28,31 +28,36 @@ export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
       {dropDown && (
         <div style={{ ...dropdownStyle }}>
           <button
-            style={{ ...dropdownButtonStyle }}
+            className="dropdownbutton"
+            // style={{ ...dropdownButtonStyle }}
             onClick={() => {
-              changeGameSize(3)
-              setSelectGameSize("small")
               setDropDown(false)
+              setSelectGameSize("small")
+              changeGameSize(5)
             }}
           >
             small
           </button>
           <button
-            style={{ ...dropdownButtonStyle }}
+            className="dropdownbutton"
+            // style={{ ...dropdownButtonStyle }}
             onClick={() => {
-              changeGameSize(5)
-              setSelectGameSize("med")
               setDropDown(false)
+              setSelectGameSize("med")
+
+              changeGameSize(6)
             }}
           >
             med
           </button>
           <button
-            style={{ ...dropdownButtonStyle }}
+            className="dropdownbutton"
+            // style={{ ...dropdownButtonStyle }}
             onClick={() => {
-              changeGameSize(7)
-              setSelectGameSize("large")
               setDropDown(false)
+              setSelectGameSize("large")
+
+              changeGameSize(7)
             }}
           >
             large
@@ -66,7 +71,7 @@ export const GameSizeDropDown = ({ changeGameSize }: GameSizeDropDownProps) => {
 const containerStyle: React.CSSProperties = {}
 
 const buttonStyle: React.CSSProperties = {
-  backgroundColor: "pink",
+  backgroundColor: "#214065",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
@@ -75,17 +80,18 @@ const buttonStyle: React.CSSProperties = {
   paddingLeft: ".7rem",
   paddingRight: ".7rem",
   cursor: "pointer",
-  border: "1px solid white",
+  border: "2px solid white",
   borderRadius: ".5rem",
   justifySelf: "center",
   fontSize: "1rem",
   width: "5rem",
+  color: "#fdfffc",
 }
 
 const dropdownStyle: React.CSSProperties = {
   zIndex: "2",
   position: "absolute",
-  backgroundColor: "pink",
+  backgroundColor: "#214065",
   fontSize: "1rem",
   width: "100%",
   display: "flex",
@@ -95,13 +101,4 @@ const dropdownStyle: React.CSSProperties = {
   // boxSizing: "content-box",
   boxSizing: "border-box",
   gap: ".5rem",
-}
-
-const dropdownButtonStyle: React.CSSProperties = {
-  border: "0px",
-  fontSize: "1rem",
-  width: "100%",
-  textAlign: "start",
-  backgroundColor: "pink",
-  cursor: "pointer",
 }

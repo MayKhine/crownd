@@ -4,8 +4,18 @@ type HowToCardProps = {
 }
 export const HowToCard = ({ closePopup }: HowToCardProps) => {
   return (
-    <div style={{ ...baseStyle }}>
-      <div style={{ ...cardStyle }}>
+    <div
+      // style={{ ...baseStyle }}
+      className="howtoCardContainer"
+      onClick={closePopup}
+    >
+      <div
+        className="howtoCard"
+        // style={{ ...cardStyle }}
+        onClick={(e) => {
+          e.stopPropagation()
+        }}
+      >
         <IoCloseCircleOutline
           onClick={closePopup}
           style={{ ...closeIconStyle }}
@@ -58,21 +68,28 @@ const textContainerStyle: React.CSSProperties = {
   flexDirection: "column",
 }
 
-const cardStyle: React.CSSProperties = {
-  backgroundColor: "pink",
-  zIndex: "2",
-  width: "70%",
-  borderRadius: "1rem",
-  padding: "1rem",
-  paddingLeft: "2rem",
-  paddingRight: "2rem",
-  boxSizing: "border-box",
-  display: "flex",
-  flexDirection: "column",
-}
+// const cardStyle: React.CSSProperties = {
+//   backgroundColor: "#214065",
+//   color: "#fdfffc",
+//   zIndex: "2",
+//   width: "70%",
+//   borderRadius: "1rem",
+//   padding: "1rem",
+//   paddingLeft: "2rem",
+//   paddingRight: "2rem",
+//   boxSizing: "border-box",
+//   display: "flex",
+//   flexDirection: "column",
+//   minHeight: "max-content",
+//   overflow: "visible",
+// }
 
-const baseStyle: React.CSSProperties = {
-  width: "100%",
-  justifyItems: "center",
-  backgroundColor: "green",
-}
+// const baseStyle: React.CSSProperties = {
+//   width: "100%",
+//   minHeight: "100vh",
+//   height: "100%",
+//   display: "flex",
+//   flexDirection: "column",
+//   alignItems: "center",
+//   justifyContent: "center",
+// }

@@ -30,7 +30,7 @@ export const Grid = ({
               gridTemplateColumns: `repeat(${gameSize}, 1fr)`,
               columnGap: "0",
               backgroundColor: "pink",
-              width: `${gameSize * 5}rem`,
+              width: `${gameSize * 4}rem`,
               overflow: "hidden",
               boxSizing: "border-box",
             }}

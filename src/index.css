@@ -9,6 +9,8 @@ body {
   font-family: "Onest", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+  overflow-x: hidden;
+  background-color: #0b2545;
 }
 
 h1,
@@ -47,4 +49,83 @@ h4 {
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+.dropdownbutton {
+  border: 0px;
+  font-size: 1rem;
+  width: 100%;
+  text-align: start;
+  background-color: #214065;
+  cursor: pointer;
+  color: #fdfffc;
+}
+
+.dropdownbutton:hover {
+  border: 0px;
+  font-size: 1rem;
+  width: 100%;
+  text-align: start;
+  background-color: #446792;
+  color: #feffca;
+
+  cursor: pointer;
+  border-radius: 0.2rem;
+}
+
+.pageContainer {
+  background-color: #0b2545;
+  /* width: 100%; */
+  /* height: auto; */
+  /* min-height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 2rem;
+  width: auto;
+}
+
+.winCard {
+  background-color: #0b2545;
+  color: #fdfffc;
+  z-index: 2;
+  width: 15rem;
+  height: 10rem;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.howtoCardContainer {
+  width: 100%;
+  /* background-color: red; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.howtoCard {
+  background-color: #0b2545;
+  color: #fdfffc;
+  z-index: 2;
+  width: 70%;
+  max-width: 70rem;
+  height: auto;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 670px) {
+  .pageContainer {
+    width: auto;
+    height: auto;
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

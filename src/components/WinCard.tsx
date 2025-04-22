@@ -6,31 +6,21 @@ type WinCardProps = {
 }
 export const WinCard = ({ closePopup, time }: WinCardProps) => {
   return (
-    <div style={{ ...winCardStyle }}>
-      <IoCloseCircleOutline
-        onClick={closePopup}
-        style={{ ...closeIconStyle }}
-        size={30}
-      />
+    <div>
+      <div className="winCard">
+        <IoCloseCircleOutline
+          onClick={closePopup}
+          style={{ ...closeIconStyle }}
+          size={30}
+        />
 
-      <div style={{ ...textContainerStyle }}>
-        <div> You win! </div>
-        <div> Solve Time: {formatTime(time)}</div>
+        <div style={{ ...textContainerStyle }}>
+          <h3> You win! </h3>
+          <div> Solve Time: {formatTime(time)}</div>
+        </div>
       </div>
     </div>
   )
-}
-
-const winCardStyle: React.CSSProperties = {
-  backgroundColor: "pink",
-  zIndex: "2",
-  width: "15rem",
-  height: "10rem",
-  borderRadius: "1rem",
-  padding: "1rem",
-  boxSizing: "border-box",
-  display: "flex",
-  flexDirection: "column",
 }
 
 const closeIconStyle: React.CSSProperties = {
@@ -46,3 +36,13 @@ const textContainerStyle: React.CSSProperties = {
   alignItems: "center",
   // backgroundColor: "red",
 }
+
+// const baseStyle: React.CSSProperties = {
+//   width: "100%",
+//   minHeight: "100vh",
+//   height: "100%",
+//   display: "flex",
+//   flexDirection: "column",
+//   alignItems: "center",
+//   justifyContent: "center",
+// }
