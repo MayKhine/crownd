@@ -570,8 +570,56 @@ export const Board = () => {
   }
 
   return (
-    <div>
-      <div>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        gap: "1rem",
+        flexDirection: "column",
+      }}
+    >
+      {toggleWin && (
+        <Popup
+          closePopup={() => {
+            setToggleWin(false)
+          }}
+        >
+          <div
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation()
+            }}
+          >
+            <WinCard
+              closePopup={() => {
+                setToggleWin(false)
+              }}
+              time={time}
+            />
+          </div>
+        </Popup>
+      )}
+
+      {toggleHowTo && (
+        <Popup
+          closePopup={() => {
+            setToggleHowTo(false)
+          }}
+        >
+          <div
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation()
+            }}
+          >
+            <HowToCard
+              closePopup={() => {
+                setToggleHowTo(false)
+              }}
+            />
+          </div>
+        </Popup>
+      )}
+
+      <div style={{ boxSizing: "border-box", width: "100%" }}>
         <div
           style={{
             color: "white",
@@ -579,6 +627,7 @@ export const Board = () => {
             justifyContent: "space-between",
             alignItems: "flex-end",
             paddingBottom: ".5rem",
+            boxSizing: "border-box",
           }}
         >
           <div
@@ -586,7 +635,7 @@ export const Board = () => {
               display: "flex",
               flexDirection: "column",
               gap: ".2rem",
-              width: "7rem",
+              width: "6rem",
             }}
           >
             <div
@@ -600,7 +649,9 @@ export const Board = () => {
             </div>
           </div>
 
-          <GameSizeDropDown changeGameSize={updateGameSize} />
+          <div style={{ width: "6rem" }}>
+            <GameSizeDropDown changeGameSize={updateGameSize} />
+          </div>
           <div
             style={{
               height: "100%",
@@ -609,10 +660,7 @@ export const Board = () => {
               flexDirection: "column",
               alignContent: "flex-end",
               alignItems: "flex-end",
-              width: "7rem",
-
-              // flexGrow: "1",
-              // backgroundColor: "pink",
+              width: "6rem",
             }}
           >
             <div
@@ -629,7 +677,7 @@ export const Board = () => {
                   setToggleHowTo(true)
                 }}
               />
-              <span className="tooltiptext"> How to play</span>
+              {/* <span className="tooltiptext"> How to play</span> */}
             </div>
             <div className="tooltip">
               <MdRestartAlt
@@ -641,51 +689,12 @@ export const Board = () => {
                   setToggleRestart(!toggleRestart)
                 }}
               ></MdRestartAlt>
-              <span className="tooltiptext">Restart</span>
+              {/* <span className="tooltiptext">Restart</span> */}
             </div>
           </div>
         </div>
-        {toggleWin && (
-          <Popup
-            closePopup={() => {
-              setToggleWin(false)
-            }}
-          >
-            <div
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation()
-              }}
-            >
-              <WinCard
-                closePopup={() => {
-                  setToggleWin(false)
-                }}
-                time={time}
-              />
-            </div>
-          </Popup>
-        )}
-
-        {toggleHowTo && (
-          <Popup
-            closePopup={() => {
-              setToggleHowTo(false)
-            }}
-          >
-            <div
-              onClick={(e: React.MouseEvent) => {
-                e.stopPropagation()
-              }}
-            >
-              <HowToCard
-                closePopup={() => {
-                  setToggleHowTo(false)
-                }}
-              />
-            </div>
-          </Popup>
-        )}
       </div>
+
       <div>
         <Grid
           grid={gameGridArr}
