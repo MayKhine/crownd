@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  tiletactics:
+    image: crownd
+    build:
+      context: ./
+    ports:
+      - "12351:80"
+    platform: linux/arm64/v8
+    restart: unless-stopped

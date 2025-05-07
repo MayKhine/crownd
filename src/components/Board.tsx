@@ -23,9 +23,9 @@ const colorArr = [
   "#fcf6bd",
   "#d0f4de",
   "#a9def9",
-  "#e4c1f9",
   "#c8b6ff",
   "#ffdab9",
+  "#FEDBFF",
 ]
 
 const createGameGridArr = (gameSize: number, value: string) => {
